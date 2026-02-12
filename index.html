@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍦</text></svg>">
+    <title>The Promoter Blueprint</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 100%);
+            min-height: 100vh;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 56px;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: -2px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .header h1 span {
+            background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 20px;
+            color: #d1d5db;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* Toggle Button */
+        .toggle-container {
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: #1f1f1f;
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: 1px solid #333;
+        }
+
+        .toggle-label {
+            font-size: 15px;
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 56px;
+            height: 30px;
+            cursor: pointer;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #333;
+            border-radius: 30px;
+            transition: 0.3s;
+        }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            left: 3px;
+            bottom: 3px;
+            background: #666;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+        }
+
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(26px);
+            background: #fff;
+        }
+
+        .ai-status {
+            font-size: 14px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 20px;
+            transition: 0.3s;
+        }
+
+        .ai-status.off {
+            background: #333;
+            color: #6b7280;
+        }
+
+        .ai-status.on {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            color: #fff;
+        }
+
+        .blueprint {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        .column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            animation: fadeIn 0.6s ease-out forwards;
+            opacity: 0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .column:nth-child(1) { animation-delay: 0.1s; }
+        .column:nth-child(3) { animation-delay: 0.2s; }
+        .column:nth-child(5) { animation-delay: 0.3s; }
+        .column:nth-child(7) { animation-delay: 0.4s; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Column hover expand effect */
+        .column:hover {
+            transform: scale(1.15);
+            z-index: 10;
+        }
+
+        .column:hover .column-content {
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
+        }
+
+        .column-header {
+            padding: 20px 24px;
+            border-radius: 16px 16px 0 0;
+            text-align: center;
+        }
+
+        .column-number {
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            opacity: 0.9;
+            margin-bottom: 6px;
+        }
+
+        .column-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+
+        .column-content {
+            background: #1f1f1f;
+            padding: 24px;
+            flex: 1;
+            border-radius: 0 0 16px 16px;
+            border: 1px solid #333;
+            border-top: none;
+        }
+
+        /* Column 1 - Traffic */
+        .col-traffic .column-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+        .col-traffic .column-number { color: #93c5fd; }
+
+        /* Column 2 - Holding */
+        .col-holding .column-header {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+        }
+        .col-holding .column-number { color: #c4b5fd; }
+
+        /* Column 3 - Selling */
+        .col-selling .column-header {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        .col-selling .column-number { color: #fde68a; }
+
+        /* Column 4 - Outcomes */
+        .col-outcomes .column-header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        .col-outcomes .column-number { color: #6ee7b7; }
+
+        .subsection {
+            margin-bottom: 20px;
+        }
+
+        .subsection:last-child {
+            margin-bottom: 0;
+        }
+
+        .subsection-title {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #6b7280;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .subsection-title::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .col-traffic .subsection-title::before { background: #3b82f6; }
+        .col-holding .subsection-title::before { background: #8b5cf6; }
+        .col-selling .subsection-title::before { background: #f59e0b; }
+        .col-outcomes .subsection-title::before { background: #10b981; }
+
+        .item {
+            background: #2a2a2a;
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #f3f4f6;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+        }
+
+        .item:hover {
+            background: #363636;
+            transform: translateX(6px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .item:last-child {
+            margin-bottom: 0;
+        }
+
+        .item-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .col-traffic .item-icon { background: rgba(59, 130, 246, 0.2); }
+        .col-holding .item-icon { background: rgba(139, 92, 246, 0.2); }
+        .col-selling .item-icon { background: rgba(245, 158, 11, 0.2); }
+        .col-outcomes .item-icon { background: rgba(16, 185, 129, 0.2); }
+
+        /* AI Use Cases - Hidden by default */
+        .ai-use-case {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
+            opacity: 0;
+            margin-top: 0;
+        }
+
+        .ai-use-case.visible {
+            max-height: 200px;
+            opacity: 1;
+            margin-top: 8px;
+        }
+
+        .ai-use-case-content {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #c4b5fd;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .ai-use-case-content::before {
+            content: '🍦';
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        /* Arrows between columns */
+        .arrow-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            flex-shrink: 0;
+        }
+
+        .arrow {
+            width: 44px;
+            height: 44px;
+            background: #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            font-size: 22px;
+            font-weight: bold;
+            animation: arrowPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes arrowPulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        /* Loop back arrow */
+        .loop-container {
+            position: relative;
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 2px dashed #8b5cf6;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .loop-text {
+            color: #a78bfa;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .loop-arrow {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f1f1f;
+            padding: 4px 12px;
+            border-radius: 20px;
+            color: #8b5cf6;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Key insight box */
+        .insight-box {
+            margin-top: 16px;
+            padding: 14px;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(239, 68, 68, 0.1) 100%);
+            border-radius: 10px;
+            border-left: 3px solid #f59e0b;
+        }
+
+        .insight-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #f59e0b;
+            margin-bottom: 6px;
+        }
+
+        .insight-text {
+            font-size: 13px;
+            color: #d1d5db;
+            line-height: 1.5;
+        }
+
+        /* AI Section Insight */
+        .ai-section-insight {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
+            opacity: 0;
+            margin-top: 0;
+        }
+
+        .ai-section-insight.visible {
+            max-height: 150px;
+            opacity: 1;
+            margin-top: 16px;
+        }
+
+        .ai-insight-content {
+            padding: 14px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%);
+            border-radius: 10px;
+            border-left: 3px solid #8b5cf6;
+        }
+
+        .ai-insight-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #a78bfa;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ai-insight-text {
+            font-size: 13px;
+            color: #c4b5fd;
+            line-height: 1.5;
+        }
+
+        /* Success indicators */
+        .success-icon {
+            color: #10b981;
+        }
+
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .footer span {
+            color: #f59e0b;
+            font-weight: 800;
+        }
+
+        .made-by {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #6b7280;
+            padding-bottom: 40px;
+        }
+
+        .made-by a {
+            color: #9ca3af;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .made-by a:hover {
+            color: #f59e0b;
+        }
+
+        /* ============================================
+           JICECREAM MODE - AI Toggle Transformation
+           ============================================ */
+
+        body {
+            transition: background 0.5s ease;
+        }
+
+        body.jicecream-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d1b4e 50%, #1f1f3a 100%);
+            /* cursor: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 100 100"><text y="70" font-size="70">🍦</text></svg>') 16 16, auto; */
+        }
+
+        /* body.jicecream-mode * {
+            cursor: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 100 100"><text y="70" font-size="70">🍦</text></svg>') 16 16, auto;
+        } */
+
+        body.jicecream-mode .header h1 {
+            animation: jicecreamGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes jicecreamGlow {
+            0%, 100% { text-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
+            50% { text-shadow: 0 0 40px rgba(139, 92, 246, 0.6), 0 0 60px rgba(236, 72, 153, 0.3); }
+        }
+
+        body.jicecream-mode .toggle-container {
+            background: linear-gradient(135deg, #3b2066 0%, #4c1d95 100%);
+            border-color: #7c3aed;
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.4);
+        }
+
+        body.jicecream-mode .arrow {
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            color: #fff;
+            animation: arrowPulse 1.5s ease-in-out infinite, rainbowGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes rainbowGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(139, 92, 246, 0.6); }
+            33% { box-shadow: 0 0 15px rgba(236, 72, 153, 0.6); }
+            66% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.6); }
+        }
+
+        body.jicecream-mode .column-header {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        body.jicecream-mode .item:hover {
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        body.jicecream-mode .footer {
+            color: #c4b5fd;
+        }
+
+        body.jicecream-mode .footer span {
+            background: linear-gradient(135deg, #f59e0b 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .ai-status {
+            font-size: 14px;
+            font-weight: 700;
+            padding: 6px 16px;
+            border-radius: 20px;
+            transition: all 0.4s ease;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .ai-status.jicecream {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #3b82f6 100%);
+            color: #fff;
+            min-width: auto;
+            padding: 8px 20px;
+            font-size: 13px;
+            letter-spacing: 1px;
+            animation: statusPop 0.4s ease;
+        }
+
+        @keyframes statusPop {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* ============================================
+           FLOATING HEADS - CHAOS MODE
+           ============================================ */
+
+        .floating-heads {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .floating-head {
+            position: absolute;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        body.jicecream-mode .floating-head {
+            opacity: 0.85;
+        }
+
+        .head-1 {
+            width: 150px;
+            top: 5%;
+            left: 3%;
+            animation: chaos1 4s ease-in-out infinite, spinFast 3s linear infinite, megaPulse 2s ease-in-out infinite;
+        }
+
+        .head-2 {
+            width: 200px;
+            top: 55%;
+            left: 1%;
+            animation: chaos2 5s ease-in-out infinite, spinSlow 8s linear infinite reverse, pulse2 3s ease-in-out infinite;
+            animation-delay: -1s;
+        }
+
+        .head-3 {
+            width: 100px;
+            top: 15%;
+            right: 2%;
+            animation: chaos3 3s ease-in-out infinite, spinFast 2s linear infinite reverse, megaPulse 1.5s ease-in-out infinite;
+            animation-delay: -2s;
+        }
+
+        .head-4 {
+            width: 180px;
+            top: 65%;
+            right: 3%;
+            animation: chaos1 6s ease-in-out infinite, spinSlow 10s linear infinite, pulse2 4s ease-in-out infinite;
+            animation-delay: -0.5s;
+        }
+
+        .head-5 {
+            width: 120px;
+            top: 35%;
+            right: 6%;
+            animation: chaos2 3.5s ease-in-out infinite, spinFast 2.5s linear infinite, megaPulse 2s ease-in-out infinite;
+            animation-delay: -1.5s;
+        }
+
+        .head-6 {
+            width: 80px;
+            top: 80%;
+            left: 15%;
+            animation: flyAcross 8s linear infinite, spinFast 1.5s linear infinite;
+        }
+
+        .head-7 {
+            width: 250px;
+            top: 30%;
+            left: -5%;
+            animation: chaos3 7s ease-in-out infinite, spinSlow 12s linear infinite, megaPulse 3s ease-in-out infinite;
+            animation-delay: -3s;
+        }
+
+        .head-8 {
+            width: 60px;
+            top: 10%;
+            left: 50%;
+            animation: bounce 1s ease-in-out infinite, spinFast 1s linear infinite;
+        }
+
+        .head-9 {
+            width: 90px;
+            top: 85%;
+            right: 20%;
+            animation: chaos1 2.5s ease-in-out infinite, spinFast 2s linear infinite reverse, megaPulse 1s ease-in-out infinite;
+            animation-delay: -0.8s;
+        }
+
+        .head-10 {
+            width: 140px;
+            top: 45%;
+            left: 8%;
+            animation: wobble 0.5s ease-in-out infinite, spinSlow 6s linear infinite;
+        }
+
+        @keyframes chaos1 {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-50px) translateX(30px); }
+            50% { transform: translateY(-20px) translateX(-40px); }
+            75% { transform: translateY(-70px) translateX(20px); }
+        }
+
+        @keyframes chaos2 {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            20% { transform: translateY(-60px) translateX(-30px); }
+            40% { transform: translateY(20px) translateX(50px); }
+            60% { transform: translateY(-40px) translateX(-20px); }
+            80% { transform: translateY(10px) translateX(40px); }
+        }
+
+        @keyframes chaos3 {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-80px) translateX(-60px); }
+        }
+
+        @keyframes flyAcross {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(calc(100vw + 100px)); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-100px); }
+        }
+
+        @keyframes wobble {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+        }
+
+        @keyframes spinFast {
+            from { rotate: 0deg; }
+            to { rotate: 360deg; }
+        }
+
+        @keyframes spinSlow {
+            from { rotate: 0deg; }
+            to { rotate: -360deg; }
+        }
+
+        @keyframes megaPulse {
+            0%, 100% { scale: 1; }
+            50% { scale: 1.5; }
+        }
+
+        @keyframes pulse2 {
+            0%, 100% { scale: 1; }
+            25% { scale: 0.7; }
+            75% { scale: 1.3; }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Floating Heads -->
+    <div class="floating-heads">
+        <img src="images/Flora FB-1.jpg" class="floating-head head-1" alt="">
+        <img src="images/Flora FB-1.jpg" class="floating-head head-2" alt="">
+        <img src="images/Flora FB-1.jpg" class="floating-head head-3" alt="">
+        <img src="images/Flora FB-1.jpg" class="floating-head head-4" alt="">
+        <img src="images/Flora FB-1.jpg" class="floating-head head-5" alt="">
+        <img src="images/Flora FB-1.jpg" class="floating-head head-6" alt="">
+        <img src="images/Flora FB-1.jpg" class="floating-head head-7" alt="">
+        <img src="images/Flora FB-1.jpg" class="floating-head head-8" alt="">
+        <img src="images/Flora FB-1.jpg" class="floating-head head-9" alt="">
+        <img src="images/Flora FB-1.jpg" class="floating-head head-10" alt="">
+    </div>
+    <div class="header">
+        <h1>🚀 <span>PROMOTER</span> BLUEPRINT</h1>
+        <p>Don't forget your job as CEO is to promote your stuff!</p>
+    </div>
+
+    <!-- Toggle for AI Use Cases -->
+    <div class="toggle-container">
+        <span class="toggle-label">Show AI Use-Cases:</span>
+        <label class="toggle-switch">
+            <input type="checkbox" id="aiToggle" onchange="toggleAI()" autocomplete="off">
+            <span class="toggle-slider"></span>
+        </label>
+        <span class="ai-status off" id="aiStatus">OFF</span>
+    </div>
+
+    <div class="blueprint">
+        <!-- Column 1: Traffic -->
+        <div class="column col-traffic">
+            <div class="column-header">
+                <div class="column-number">Step 1</div>
+                <div class="column-title">🚀 Traffic</div>
+            </div>
+            <div class="column-content">
+                <div class="subsection">
+                    <div class="subsection-title">Organic</div>
+
+                    <div class="item"><span class="item-icon">🎙️</span> Other people's podcasts</div>
+                    <div class="ai-use-case">
+                        <div class="ai-use-case-content">Research which podcasts match your audience. Analyze host style. Generate talking points & prep docs.</div>
+                    </div>
+
+                    <div class="item"><span class="item-icon">✍️</span> Blogging / Guest posts</div>
+                    <div class="ai-use-case">
+                        <div class="ai-use-case-content">Find high-traffic sites accepting guests. Draft outlines. Repurpose content across formats.</div>
+                    </div>
+
+                    <div class="item"><span class="item-icon">🤝</span> Events & networking</div>
+                    <div class="ai-use-case">
+                        <div class="ai-use-case-content">Research attendees beforehand. Generate personalized conversation starters. Draft follow-up emails.</div>
+                    </div>
+
+                    <div class="item"><span class="item-icon">📱</span> Social media posts</div>
+                    <div class="ai-use-case">
+                        <div class="ai-use-case-content">Generate 20 post variations from one idea. Repurpose long content into threads. A/B test hooks.</div>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <div class="subsection-title">Paid</div>
+
+                    <div class="item"><span class="item-icon">📘</span> Facebook / Meta ads</div>
+                    <div class="ai-use-case">
+                        <div class="ai-use-case-content">Generate 50+ ad copy variations for testing. Create headline permutations. Analyze winning patterns.</div>
+                    </div>
+
+                    <div class="item"><span class="item-icon">🎵</span> TikTok ads</div>
+                    <div class="ai-use-case">
+                        <div class="ai-use-case-content">Analyze trending formats. Script short-form hooks. Generate multiple angle variations.</div>
+                    </div>
+
+                    <div class="item"><span class="item-icon">▶️</span> YouTube ads</div>
+                    <div class="ai-use-case">
+                        <div class="ai-use-case-content">Write scripts optimized for skip rates. Generate thumbnail concepts. Create retargeting sequences.</div>
+                    </div>
+                </div>
+
+                <div class="ai-section-insight">
+                    <div class="ai-insight-content">
+                        <div class="ai-insight-label">🍦 Hot Take</div>
+                        <div class="ai-insight-text">Stop hiring. Start prompting. Test 50x more creative variations while your competitors are still writing job posts.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="arrow-container">
+            <div class="arrow">→</div>
+        </div>
+
+        <!-- Column 2: Holding Pattern -->
+        <div class="column col-holding">
+            <div class="column-header">
+                <div class="column-number">Step 2</div>
+                <div class="column-title">🔄 Holding Pattern</div>
+            </div>
+            <div class="column-content">
+                <div class="subsection">
+                    <div class="subsection-title">Your World</div>
+
+                    <div class="item"><span class="item-icon">📧</span> Email newsletter</div>
+                    <div class="ai-use-case">
+                        <div class="ai-use-case-content">Draft weekly issues from notes. Personalize subject lines per segment. Analyze what resonates.</div>
+                    </div>
+
+                    <div class="item"><span class="item-icon">🎧</span> Your podcast</div>
+                    <div class="ai-use-case">
+                        <div class="ai-use-case-content">Research guests & prep questions. Generate show notes & timestamps. Repurpose into clips & posts.</div>
+                    </div>
+
+                    <div class="item"><span class="item-icon">𝕏</span> Posts on X / Twitter</div>
+                    <div class="ai-use-case">
+                        <div class="ai-use-case-content">Turn one podcast into 30 tweets. Suggest optimal posting times. Draft replies at scale.</div>
+                    </div>
+
+                    <div class="item"><span class="item-icon">📺</span> YouTube content</div>
+                    <div class="ai-use-case">
+                        <div class="ai-use-case-content">Write scripts from bullet points. Generate SEO descriptions & tags. Create chapter timestamps.</div>
+                    </div>
+                </div>
+
+                <div class="insight-box">
+                    <div class="insight-label">💡 Key</div>
+                    <div class="insight-text">Keep them interested with value — not promotional. Build trust over time.</div>
+                </div>
+
+                <div class="ai-section-insight">
+                    <div class="ai-insight-content">
+                        <div class="ai-insight-label">🍦 Hot Take</div>
+                        <div class="ai-insight-text">One podcast episode = 30 tweets + 5 LinkedIn posts + newsletter + blog + clips. Content multiplication is the cheat code.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="arrow-container">
+            <div class="arrow">→</div>
+        </div>
+
+        <!-- Column 3: Selling Event -->
+        <div class="column col-selling">
+            <div class="column-header">
+                <div class="column-number">Step 3</div>
+                <div class="column-title">🎯 Selling Event</div>
+            </div>
+            <div class="column-content">
+                <div class="subsection">
+                    <div class="subsection-title">The Offer</div>
+
+                    <div class="item"><span class="item-icon">📹</span> Webinar / Workshop</div>
+                    <div class="ai-use-case">
+                        <div class="ai-use-case-content">Build slide decks from outlines. Generate registration page copy. Create reminder sequences.</div>
+                    </div>
+
+                    <div class="item"><span class="item-icon">📨</span> Email campaign</div>
+                    <div class="ai-use-case">
+                        <div class="ai-use-case-content">Write full 5-7 email sequences. A/B test subject lines at scale. Personalize by segment.</div>
+                    </div>
+
+                    <div class="item"><span class="item-icon">🎯</span> Retargeting campaign</div>
+                    <div class="ai-use-case">
+                        <div class="ai-use-case-content">Generate ad variations for each funnel stage. Write objection-handling copy. Create urgency sequences.</div>
+                    </div>
+
+                    <div class="item"><span class="item-icon">✉️</span> Direct outreach</div>
+                    <div class="ai-use-case">
+                        <div class="ai-use-case-content">Research prospects individually. Personalize first lines at scale. Draft follow-up sequences.</div>
+                    </div>
+                </div>
+
+                <div class="insight-box">
+                    <div class="insight-label">🔥 Critical</div>
+                    <div class="insight-text">Every campaign needs a <strong>new hook</strong>. It's about the learning event, not the product.</div>
+                </div>
+
+                <div class="ai-section-insight">
+                    <div class="ai-insight-content">
+                        <div class="ai-insight-label">🍦 Hot Take</div>
+                        <div class="ai-insight-text">Weekly campaigns instead of monthly. More shots on goal = more revenue. The math is embarrassingly simple.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="arrow-container">
+            <div class="arrow">→</div>
+        </div>
+
+        <!-- Column 4: Outcomes -->
+        <div class="column col-outcomes">
+            <div class="column-header">
+                <div class="column-number">Step 4</div>
+                <div class="column-title">💰 Outcomes</div>
+            </div>
+            <div class="column-content">
+                <div class="subsection">
+                    <div class="subsection-title">Success</div>
+
+                    <div class="item"><span class="item-icon">✅</span> <span class="success-icon">$</span> Direct sale</div>
+                    <div class="ai-use-case">
+                        <div class="ai-use-case-content">Optimize checkout copy. Generate upsell sequences. Handle objections in real-time chat.</div>
+                    </div>
+
+                    <div class="item"><span class="item-icon">✅</span> Free trial signup</div>
+                    <div class="ai-use-case">
+                        <div class="ai-use-case-content">Create personalized onboarding flows. Generate activation email sequences. Identify churn signals.</div>
+                    </div>
+
+                    <div class="item"><span class="item-icon">✅</span> Call booked (high ticket)</div>
+                    <div class="ai-use-case">
+                        <div class="ai-use-case-content">Research prospect before call. Generate custom proposals. Draft follow-up & close sequences.</div>
+                    </div>
+                </div>
+
+                <div class="loop-container">
+                    <div class="loop-arrow">← Loop Back</div>
+                    <div class="loop-text">Didn't convert?<br>Back to Holding Pattern.<br><strong>You get another shot.</strong></div>
+                </div>
+
+                <div class="ai-section-insight">
+                    <div class="ai-insight-content">
+                        <div class="ai-insight-label">🍦 Hot Take</div>
+                        <div class="ai-insight-text">Forget "Dear {First_Name}" — actual personalization at scale. Every touchpoint feels hand-crafted because it basically is.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Your job as CEO is <span>PROMOTER</span>. This is the map. Now go sell some ice cream. 🍦
+    </div>
+
+    <div class="made-by">
+        Made by <a href="https://twitter.com/jicecream" target="_blank">jicecream</a>, founder of <a href="https://www.ajsmart.com" target="_blank">AJ&Smart</a>, Modified by C.W. on 2026-02-12
+    </div>
+
+    <script>
+        // Reset toggle on page load (browsers can remember checkbox state)
+        window.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('aiToggle').checked = false;
+            toggleAI();
+        });
+
+        function toggleAI() {
+            const toggle = document.getElementById('aiToggle');
+            const status = document.getElementById('aiStatus');
+            const aiUseCases = document.querySelectorAll('.ai-use-case');
+            const aiInsights = document.querySelectorAll('.ai-section-insight');
+            const body = document.body;
+
+            if (toggle.checked) {
+                // JICECREAM MODE ACTIVATED
+                status.textContent = '🍦 AI Use-Case Mode';
+                status.classList.remove('off');
+                status.classList.add('jicecream');
+                body.classList.add('jicecream-mode');
+
+                aiUseCases.forEach(el => el.classList.add('visible'));
+                aiInsights.forEach(el => el.classList.add('visible'));
+            } else {
+                // Back to normal
+                status.textContent = 'OFF';
+                status.classList.remove('jicecream');
+                status.classList.add('off');
+                body.classList.remove('jicecream-mode');
+
+                aiUseCases.forEach(el => el.classList.remove('visible'));
+                aiInsights.forEach(el => el.classList.remove('visible'));
+            }
+        }
+    </script>
+</body>
+</html>

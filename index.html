@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍦</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
     <title>The Promoter Blueprint</title>
     <style>
         * {
@@ -67,6 +67,13 @@
             font-size: 15px;
             color: #9ca3af;
             font-weight: 500;
+        }
+
+        .toggle-divider {
+            width: 1px;
+            height: 20px;
+            background: #444;
+            margin: 0 4px;
         }
 
         .toggle-switch {
@@ -602,7 +609,7 @@
             transition: opacity 0.3s ease;
         }
 
-        body.jicecream-mode .floating-head {
+        body.floating-heads-mode .floating-head {
             opacity: 0.85;
         }
 
@@ -759,7 +766,7 @@
         <p>Don't forget your job as CEO is to promote your stuff!</p>
     </div>
 
-    <!-- Toggle for AI Use Cases -->
+    <!-- Toggles -->
     <div class="toggle-container">
         <span class="toggle-label">Show AI Use-Cases:</span>
         <label class="toggle-switch">
@@ -767,6 +774,15 @@
             <span class="toggle-slider"></span>
         </label>
         <span class="ai-status off" id="aiStatus">OFF</span>
+
+        <span class="toggle-divider"></span>
+
+        <span class="toggle-label">Floating Heads:</span>
+        <label class="toggle-switch">
+            <input type="checkbox" id="headsToggle" onchange="toggleHeads()" autocomplete="off">
+            <span class="toggle-slider"></span>
+        </label>
+        <span class="ai-status off" id="headsStatus">OFF</span>
     </div>
 
     <div class="blueprint">
@@ -981,10 +997,12 @@
     </div>
 
     <script>
-        // Reset toggle on page load (browsers can remember checkbox state)
+        // Reset toggles on page load (browsers can remember checkbox state)
         window.addEventListener('DOMContentLoaded', function() {
             document.getElementById('aiToggle').checked = false;
+            document.getElementById('headsToggle').checked = false;
             toggleAI();
+            toggleHeads();
         });
 
         function toggleAI() {
@@ -995,7 +1013,6 @@
             const body = document.body;
 
             if (toggle.checked) {
-                // JICECREAM MODE ACTIVATED
                 status.textContent = '🍦 AI Use-Case Mode';
                 status.classList.remove('off');
                 status.classList.add('jicecream');
@@ -1004,7 +1021,6 @@
                 aiUseCases.forEach(el => el.classList.add('visible'));
                 aiInsights.forEach(el => el.classList.add('visible'));
             } else {
-                // Back to normal
                 status.textContent = 'OFF';
                 status.classList.remove('jicecream');
                 status.classList.add('off');
@@ -1012,6 +1028,24 @@
 
                 aiUseCases.forEach(el => el.classList.remove('visible'));
                 aiInsights.forEach(el => el.classList.remove('visible'));
+            }
+        }
+
+        function toggleHeads() {
+            const toggle = document.getElementById('headsToggle');
+            const status = document.getElementById('headsStatus');
+            const body = document.body;
+
+            if (toggle.checked) {
+                status.textContent = 'ON';
+                status.classList.remove('off');
+                status.classList.add('jicecream');
+                body.classList.add('floating-heads-mode');
+            } else {
+                status.textContent = 'OFF';
+                status.classList.remove('jicecream');
+                status.classList.add('off');
+                body.classList.remove('floating-heads-mode');
             }
         }
     </script>
